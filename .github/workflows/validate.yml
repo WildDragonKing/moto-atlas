@@ -1,0 +1,54 @@
+name: Validate GPX Routes
+
+on:
+  pull_request:
+    paths:
+      - "routes/**"
+      - "drafts/**"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - run: pip install -r requirements.txt
+
+      - name: Find changed GPX files
+        id: gpx
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          FILES=$(git diff --name-only "origin/${BASE_REF}...HEAD" | grep '\.gpx$' || true)
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          echo "$FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Validate GPX
+        if: steps.gpx.outputs.files != ''
+        env:
+          CHANGED_FILES: ${{ steps.gpx.outputs.files }}
+        run: echo "$CHANGED_FILES" | xargs python scripts/validate_gpx.py
+
+      - name: Validate JSON sidecars
+        if: steps.gpx.outputs.files != ''
+        env:
+          CHANGED_FILES: ${{ steps.gpx.outputs.files }}
+        run: echo "$CHANGED_FILES" | sed 's/\.gpx$/.json/' | xargs python scripts/validate_sidecar.py
+
+      - name: Check duplicates
+        if: steps.gpx.outputs.files != ''
+        env:
+          CHANGED_FILES: ${{ steps.gpx.outputs.files }}
+        run: |
+          python scripts/build_catalog.py
+          echo "$CHANGED_FILES" | while read gpx; do
+            [ -n "$gpx" ] && python scripts/check_duplicates.py "$gpx" --catalog catalog.json
+          done
