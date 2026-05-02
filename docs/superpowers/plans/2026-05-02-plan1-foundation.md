@@ -710,6 +710,19 @@ def test_empty_catalog_passes():
     code, out = run(FIXTURES / "valid.gpx", cat)
     cat.unlink()
     assert code == 0, out
+
+
+def test_self_reference_passes(tmp_path):
+    """Katalog enthält dieselbe Route — darf kein Duplikat auslösen."""
+    # valid.gpx liegt unter tests/fixtures/valid.gpx — gpx_url muss matchen
+    cat = catalog([{
+        "id": "de-test-eifel",
+        "gpx_url": "tests/fixtures/valid.gpx",
+        "bounds": {"north": 50.37, "south": 50.32, "east": 6.60, "west": 6.51}
+    }])
+    code, out = run(FIXTURES / "valid.gpx", cat)
+    cat.unlink()
+    assert code == 0, f"Selbst-Referenz fälschlicherweise als Duplikat erkannt:\n{out}"
 ```
 
 - [ ] **Tests laufen — müssen fehlschlagen**
@@ -765,9 +778,13 @@ def main() -> int:
         print(f"✅ {Path(args.gpx_file).name} (kein Katalog — kein Duplikat-Check)")
         return 0
 
+    gpx_arg = str(Path(args.gpx_file))
     lat, lon = gpx_centroid(Path(args.gpx_file))
     catalog = json.loads(cat_path.read_text(encoding="utf-8"))
     for entry in catalog.get("routes", []) + catalog.get("drafts", []):
+        # Selbst-Referenz überspringen (passiert wenn catalog.json vor dem Check gebaut wurde)
+        if entry.get("gpx_url") and gpx_arg.endswith(entry["gpx_url"]):
+            continue
         c = bounds_centroid(entry)
         if c and haversine(lat, lon, c[0], c[1]) < THRESHOLD_KM:
             print(f"❌ Mögliches Duplikat von '{entry['id']}' (Distanz < {THRESHOLD_KM}km)")
@@ -952,7 +969,7 @@ if __name__ == "__main__":
 source .venv/bin/activate && pytest tests/ -v
 ```
 
-Expected: `17 passed`
+Expected: `18 passed`
 
 - [ ] **Commit**
 
@@ -2063,7 +2080,7 @@ pnpm dev
 source .venv/bin/activate && pytest tests/ -v
 ```
 
-Expected: `17 passed`
+Expected: `18 passed`
 
 - [ ] **Commit**
 
