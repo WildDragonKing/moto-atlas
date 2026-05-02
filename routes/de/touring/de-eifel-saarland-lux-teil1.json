@@ -1,0 +1,22 @@
+{
+  "id": "de-eifel-saarland-lux-teil1",
+  "name": "Eifel-Saarland-Luxemburg Teil 1",
+  "country": "de",
+  "region": "eifel",
+  "type": "touring",
+  "source_url": "https://www.adac.de/der-adac/regionalclubs/nrw/motorradtouren-fuers-navi/",
+  "source_name": "ADAC NavBikeTour",
+  "modified": false,
+  "modification_notes": "",
+  "rating": 4.7,
+  "rating_source": "manual",
+  "agent_review": "Königlicher Auftakt der ADAC TK10-Strecke: Von Königswinter durch die Eifel nach Hollerath. Kurvenreiche Landstraßen, Eifel-Panorama und kaum Verkehr. Scenic-App-optimierter Track vom ADAC.",
+  "distance_km": 179,
+  "elevation_gain_m": 2277,
+  "difficulty": 2,
+  "surface": "paved",
+  "offroad_pct": 0,
+  "added_at": "2026-05-02",
+  "reviewed_at": "2026-05-02",
+  "bounds": { "north": 50.672, "south": 50.403, "east": 7.277, "west": 6.232 }
+}

@@ -1,0 +1,22 @@
+{
+  "id": "de-bergisches-land-1",
+  "name": "Bergisches Land Tour 1",
+  "country": "de",
+  "region": "bergisches-land",
+  "type": "touring",
+  "source_url": "https://www.adac.de/der-adac/regionalclubs/nrw/motorradtouren-fuers-navi/",
+  "source_name": "ADAC NavBikeTour",
+  "modified": false,
+  "modification_notes": "",
+  "rating": 4.5,
+  "rating_source": "manual",
+  "agent_review": "Klassische Bergisch-Märkische Landschaft: Täler, Wälder und kurvenreiche Höhenstraßen östlich von Köln. Perfekt für einen Tagesausflug von Aachen.",
+  "distance_km": 133,
+  "elevation_gain_m": 2496,
+  "difficulty": 2,
+  "surface": "paved",
+  "offroad_pct": 0,
+  "added_at": "2026-05-02",
+  "reviewed_at": "2026-05-02",
+  "bounds": { "north": 51.157, "south": 50.970, "east": 7.408, "west": 7.135 }
+}
