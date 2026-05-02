@@ -1,0 +1,22 @@
+{
+  "id": "de-eifel-volcanic-route",
+  "name": "Volcanic Route Eifel",
+  "country": "de",
+  "region": "eifel",
+  "type": "offroad",
+  "source_url": "https://transeurotrail.org/germany/",
+  "source_name": "Trans Euro Trail",
+  "modified": false,
+  "modification_notes": "",
+  "rating": 4.8,
+  "rating_source": "manual",
+  "agent_review": "Klassischer Offroad-Einstieg in der Vulkaneifel — Schotterpisten zwischen Vulkankegeln, ruhige Waldwege und grandioser Blick auf den Laacher See.",
+  "distance_km": 142,
+  "elevation_gain_m": 1840,
+  "difficulty": 3,
+  "surface": "mixed",
+  "offroad_pct": 40,
+  "added_at": "2026-05-02",
+  "reviewed_at": "2026-05-02",
+  "bounds": { "north": 50.45, "south": 50.1, "east": 7.1, "west": 6.4 }
+}

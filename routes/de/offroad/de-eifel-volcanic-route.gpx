@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="motoatlas" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata>
+    <name>Test Route Eifel</name>
+    <desc>Testroute durch die Eifel</desc>
+  </metadata>
+  <wpt lat="50.38" lon="6.74"><name>Camping Test</name><sym>Campground</sym><type>camp</type></wpt>
+  <trk>
+    <name>Test Route Eifel</name>
+    <type>offroad</type>
+    <trkseg>
+      <trkpt lat="50.320" lon="6.510"><ele>412.0</ele></trkpt>
+      <trkpt lat="50.325" lon="6.520"><ele>420.0</ele></trkpt>
+      <trkpt lat="50.330" lon="6.530"><ele>435.0</ele></trkpt>
+      <trkpt lat="50.335" lon="6.540"><ele>428.0</ele></trkpt>
+      <trkpt lat="50.340" lon="6.550"><ele>415.0</ele></trkpt>
+      <trkpt lat="50.345" lon="6.560"><ele>408.0</ele></trkpt>
+      <trkpt lat="50.350" lon="6.570"><ele>422.0</ele></trkpt>
+      <trkpt lat="50.355" lon="6.580"><ele>445.0</ele></trkpt>
+      <trkpt lat="50.360" lon="6.590"><ele>438.0</ele></trkpt>
+      <trkpt lat="50.365" lon="6.600"><ele>425.0</ele></trkpt>
+      <trkpt lat="50.370" lon="6.610"><ele>418.0</ele></trkpt>
+    </trkseg>
+  </trk>
+</gpx>
