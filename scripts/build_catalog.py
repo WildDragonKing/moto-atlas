@@ -20,9 +20,21 @@ def load_sidecars(folder: Path, status: str, repo_root: Path) -> list[dict]:
         data["status"] = status
         if "id" not in data:
             data["id"] = jp.stem
-        gpx = jp.with_suffix(".gpx")
-        if gpx.exists():
-            data["gpx_url"] = str(gpx.relative_to(repo_root))
+        gpx_file = jp.with_suffix(".gpx")
+        if gpx_file.exists():
+            data["gpx_url"] = str(gpx_file.relative_to(repo_root))
+            try:
+                import gpxpy as _gpxpy
+                with open(gpx_file, encoding="utf-8") as gf:
+                    _gpx = _gpxpy.parse(gf)
+                pts = [p for t in _gpx.tracks for s in t.segments for p in s.points]
+                # Vereinfachen: jeden 5. Punkt nehmen, max 500 Punkte
+                step = max(1, len(pts) // 500)
+                coords = [[round(p.longitude, 5), round(p.latitude, 5)] for p in pts[::step]]
+                if coords:
+                    data["geometry"] = {"type": "LineString", "coordinates": coords}
+            except Exception:
+                pass
         entries.append(data)
     return entries
 

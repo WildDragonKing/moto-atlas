@@ -64,3 +64,29 @@ h1 em { font-style: italic; font-weight: 300; color: var(--terracotta); }
 .collection-card { background: var(--paper); border: 1px solid var(--border); padding: 16px; display: flex; flex-direction: column; gap: 8px; }
 .col-name { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; }
 .col-count { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--dust); text-transform: uppercase; letter-spacing: 0.1em; }
+
+/* MAP VIEW */
+.map-page-header { display: flex; align-items: baseline; gap: 16px; padding: 32px 64px 16px; }
+
+#map { border: 1px solid var(--border); }
+
+/* Popups */
+.route-popup { font-family: 'Lato', sans-serif; min-width: 240px; }
+.popup-header { padding: 12px 14px 10px; background: var(--paper); border-bottom: 1px solid var(--border); }
+.popup-name { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; color: var(--ink); line-height: 1.2; margin-bottom: 4px; }
+.popup-meta { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dust); }
+.popup-body { padding: 12px 14px; background: white; }
+.popup-stats { display: flex; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+.popup-stat { display: flex; flex-direction: column; gap: 1px; }
+.popup-stat-val { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: var(--ink); line-height: 1; }
+.popup-stat-key { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dust); }
+.popup-stars { color: var(--amber); letter-spacing: -1px; font-size: 14px; }
+.popup-review { font-size: 12px; line-height: 1.5; color: var(--dust); margin-bottom: 10px; }
+.popup-actions { display: flex; gap: 8px; }
+.popup-btn { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 12px; border: none; cursor: pointer; transition: background 0.2s; }
+.popup-btn.primary { background: var(--ink); color: var(--cream); }
+.popup-btn.primary:hover { background: var(--terracotta); }
+
+/* MapLibre override */
+.maplibregl-popup-content { padding: 0 !important; border-radius: 0 !important; box-shadow: 4px 8px 24px rgba(28,18,8,0.15) !important; }
+.maplibregl-popup-close-button { color: var(--dust) !important; font-size: 16px !important; padding: 6px 10px !important; }
