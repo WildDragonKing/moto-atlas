@@ -84,7 +84,7 @@ export function initMap(catalog) {
           'line-color': color,
           'line-width': isDraft ? 2 : 3,
           'line-opacity': isDraft ? 0.5 : 0.85,
-          'line-dasharray': isDraft ? [4, 3] : [1],
+          'line-dasharray': isDraft ? [4, 3] : [1, 0],
         },
       })
 
