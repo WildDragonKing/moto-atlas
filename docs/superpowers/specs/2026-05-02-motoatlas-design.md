@@ -1,7 +1,7 @@
 ---
 title: MotoAtlas — Design Spec
 date: 2026-05-02
-status: draft
+status: current
 owner: lbuettge
 ---
 
