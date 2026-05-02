@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="motoatlas" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata><name>Tiny Route</name><desc>Zu wenig Punkte</desc></metadata>
+  <trk><name>Tiny Route</name><trkseg>
+    <trkpt lat="50.320" lon="6.510"><ele>412.0</ele></trkpt>
+    <trkpt lat="50.325" lon="6.520"><ele>420.0</ele></trkpt>
+    <trkpt lat="50.330" lon="6.530"><ele>435.0</ele></trkpt>
+  </trkseg></trk>
+</gpx>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="motoatlas" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata><name>No Elevation</name><desc>Fehlt ele</desc></metadata>
+  <trk><name>No Elevation</name><trkseg>
+    <trkpt lat="50.320" lon="6.510"></trkpt>
+    <trkpt lat="50.325" lon="6.520"></trkpt>
+    <trkpt lat="50.330" lon="6.530"></trkpt>
+    <trkpt lat="50.335" lon="6.540"></trkpt>
+    <trkpt lat="50.340" lon="6.550"></trkpt>
+    <trkpt lat="50.345" lon="6.560"></trkpt>
+    <trkpt lat="50.350" lon="6.570"></trkpt>
+    <trkpt lat="50.355" lon="6.580"></trkpt>
+    <trkpt lat="50.360" lon="6.590"></trkpt>
+    <trkpt lat="50.365" lon="6.600"></trkpt>
+    <trkpt lat="50.370" lon="6.610"></trkpt>
+  </trkseg></trk>
+</gpx>
