@@ -23,10 +23,11 @@ def validate(path: Path) -> list[str]:
         errors.append(f"GPX nicht parsebar: {e}")
         return errors
 
-    if not (gpx.name or (gpx.metadata and gpx.metadata.name)):
-        errors.append("Kein <metadata><name> vorhanden — Pflichtfeld")
-    if not (gpx.description or (gpx.metadata and gpx.metadata.description)):
-        errors.append("Kein <metadata><desc> vorhanden — Pflichtfeld")
+    # Name: metadata name OR first track name acceptable
+    track_name = gpx.tracks[0].name if gpx.tracks else None
+    effective_name = gpx.name or track_name
+    if not effective_name:
+        errors.append("Kein Name vorhanden — weder <metadata><name> noch <trk><name>")
 
     if not gpx.tracks:
         errors.append("Keine <trk>-Elemente gefunden")

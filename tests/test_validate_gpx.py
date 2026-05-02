@@ -38,10 +38,11 @@ def test_too_few_points_fails():
 
 
 def test_missing_metadata_name_fails(tmp_path):
+    # Both metadata name AND track name missing — must fail
     gpx = tmp_path / "no_name.gpx"
     gpx.write_text("""<?xml version="1.0" encoding="UTF-8"?>
 <gpx version="1.1" creator="motoatlas" xmlns="http://www.topografix.com/GPX/1/1">
-  <trk><name>OK</name><trkseg>
+  <trk><trkseg>
     <trkpt lat="50.32" lon="6.51"><ele>412.0</ele></trkpt>
     <trkpt lat="50.33" lon="6.52"><ele>420.0</ele></trkpt>
     <trkpt lat="50.34" lon="6.53"><ele>435.0</ele></trkpt>
