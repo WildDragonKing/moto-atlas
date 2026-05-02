@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#c4501e">
+<title>MotoAtlas — Motorrad-Routen DE, BE, NL, FR, IT</title>
+<meta name="description" content="Kuratierte Motorrad-GPX-Routen — direkt importierbar in Scenic.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,400&family=JetBrains+Mono:wght@400;600&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/src/style.css">
+</head>
+<body>
+<nav id="nav">
+  <div class="nav-logo">Moto<span>Atlas</span></div>
+  <div class="nav-links">
+    <a href="#/">Routen</a>
+    <a href="#/map">Karte</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">Motorrad · Offroad · 5 Länder</div>
+  <h1>Die <em>besten</em><br>Routen.<br>Kuratiert.</h1>
+  <p class="hero-desc">Offroad-Tracks und Touren für DE, BE, NL, FR und IT — agent-reviewed, direkt in Scenic importierbar.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num" id="stat-routes">–</div><div class="stat-label">Routen</div></div>
+    <div class="stat"><div class="stat-num" id="stat-km">–</div><div class="stat-label">Kilometer</div></div>
+    <div class="stat"><div class="stat-num">5</div><div class="stat-label">Länder</div></div>
+  </div>
+</section>
+
+<section class="catalog-section">
+  <div class="section-header">
+    <h2 class="section-title">Routen</h2>
+  </div>
+  <div class="country-tabs" id="country-tabs"></div>
+  <div class="route-grid" id="route-grid"><div class="loading">Lade Routen…</div></div>
+</section>
+
+<section class="drafts-section" id="drafts-section" style="display:none">
+  <div class="section-header">
+    <h2 class="section-title">In Bearbeitung</h2>
+    <span class="section-sub" id="draft-count"></span>
+  </div>
+  <div class="route-grid" id="draft-grid"></div>
+</section>
+
+<section class="collections-section">
+  <h2 class="section-title">Scenic Collections</h2>
+  <p class="section-sub" style="margin-bottom:24px">ZIP-Downloads direkt in Scenic importierbar</p>
+  <div class="collections-grid" id="collections-grid"></div>
+</section>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
