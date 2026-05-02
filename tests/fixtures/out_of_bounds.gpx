@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="motoatlas" xmlns="http://www.topografix.com/GPX/1/1">
+  <metadata><name>New York Route</name><desc>Außerhalb Europa</desc></metadata>
+  <trk><name>New York Route</name><trkseg>
+    <trkpt lat="40.710" lon="-74.010"><ele>10.0</ele></trkpt>
+    <trkpt lat="40.715" lon="-74.005"><ele>12.0</ele></trkpt>
+    <trkpt lat="40.720" lon="-74.000"><ele>11.0</ele></trkpt>
+    <trkpt lat="40.725" lon="-73.995"><ele>13.0</ele></trkpt>
+    <trkpt lat="40.730" lon="-73.990"><ele>10.0</ele></trkpt>
+    <trkpt lat="40.735" lon="-73.985"><ele>11.0</ele></trkpt>
+    <trkpt lat="40.740" lon="-73.980"><ele>12.0</ele></trkpt>
+    <trkpt lat="40.745" lon="-73.975"><ele>10.0</ele></trkpt>
+    <trkpt lat="50.750" lon="-73.970"><ele>11.0</ele></trkpt>
+    <trkpt lat="40.755" lon="-73.965"><ele>13.0</ele></trkpt>
+    <trkpt lat="40.760" lon="-73.960"><ele>10.0</ele></trkpt>
+  </trkseg></trk>
+</gpx>

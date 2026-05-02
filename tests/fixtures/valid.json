@@ -1,0 +1,11 @@
+{
+  "id": "de-test-eifel-route",
+  "name": "Test Route Eifel",
+  "country": "de",
+  "region": "eifel",
+  "type": "offroad",
+  "source_url": "https://wikiloc.com/trails/test-123",
+  "source_name": "Wikiloc",
+  "modified": false,
+  "modification_notes": ""
+}
