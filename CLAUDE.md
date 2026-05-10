@@ -86,16 +86,21 @@ Erlaubte `gpx_redistribution`-Werte: `allowed`, `link_only`
 
 ## Frontend
 
-- `index.html` — App-Shell, lädt CDN-React + MapLibre + Babel-Standalone
-- `public/data.jsx` — Konstanten, `transformRoute`, `applyFilters`
-- `public/sidebar.jsx` — Routenliste, Filter-Chips, RouteDetailPane
-- `public/app.jsx` — MapLibre-Init, Layer-Logik, OSRM-Road-Snapping
-- `public/styles.css` — MotoAtlas-Theme (Fraunces + JetBrains Mono, Pergament-Palette)
-- `public/config.js` — von CI generiert (`window.MAPTILER_KEY`), gitignored
+**Stack:** Vite 5 + Svelte 5 (Runes) + MapLibre GL. Kein SvelteKit, kein React, kein Babel-Standalone-Inline-Transpile mehr. Build-Output: ~240 KB gzipped (vs ~1.3 MB unter dem alten CDN-React-Setup).
 
-Default-Tile-Provider: **OpenFreeMap Liberty** (Vector, ohne Key). MapTiler Outdoor nur wenn `MAPTILER_KEY`-Secret in CI gesetzt. Performance-Settings in `app.jsx`: `fadeDuration: 0`, `refreshExpiredTiles: false`, `transformRequest`-Cache für Tiles, GeoJSON-Source mit `maxzoom: 12 / tolerance: 0.5`. Details: `docs/research/2026-05-10-maplibre-tile-performance.md`.
+- `index.html` — Vite-Entry, lädt nur `src/main.js` + Fonts
+- `src/main.js` — Mount der App
+- `src/App.svelte` — Container: lädt catalog.json, montiert `MapView` + `Sidebar`
+- `src/lib/data.svelte.js` — Konstanten, `transformRoute`, `applyFilters`, `filters` + `ui` als globale `$state`-Stores (Svelte 5 Runes)
+- `src/lib/MapView.svelte` — MapLibre-Init in `onMount`, 1 Layer (`routes`) mit `feature-state` für hover/selected, OSRM-Road-Snapping
+- `src/lib/Sidebar.svelte` — Routenliste, Filter-Chips, mountet `RouteDetailPane`
+- `src/lib/RouteDetailPane.svelte` — Detail-Pane mit Höhenprofil, Stats, Footer-Buttons
+- `src/app.css` — MotoAtlas-Theme
+- `public/` — statische Assets (CNAME) + Symlinks zu `catalog.json`/`routes/`/`drafts/` für den Dev-Server
 
-**XSS-Regel:** Alle Sidecar-Daten ausschließlich via JSX-Interpolation rendern (React escaped automatisch). Keine unsicheren HTML-Inject-APIs verwenden.
+Default-Tile-Provider: **OpenFreeMap Liberty** (Vector, ohne Key). MapTiler nur wenn `VITE_MAPTILER_KEY` gesetzt. Performance-Settings: `fadeDuration: 0`, `refreshExpiredTiles: false`, `prefetchZoomDelta: 5`, `transformRequest`-Cache für Tiles, GeoJSON-Source mit `maxzoom: 12 / tolerance: 0.5`, **1 Layer** mit feature-state-getriebenen line-width/blur. Details: `docs/research/2026-05-10-maplibre-tile-performance.md` und `docs/research/2026-05-10-vite-svelte-stack.md`.
+
+**XSS-Regel:** Sidecar-Daten ausschließlich via Svelte-Template-Interpolation rendern (Svelte escaped automatisch). Keine `@html`-Direktive, keine `innerHTML`-Assignments.
 
 ---
 
@@ -111,39 +116,46 @@ Default-Tile-Provider: **OpenFreeMap Liberty** (Vector, ohne Key). MapTiler Outd
 
 1. `build_catalog.py` → catalog.json mit Geometrie (vereinfacht, max 500 Punkte/Route)
 2. ZIP-Collections für Scenic (pro Land+Typ + all-offroad + all-routes)
-3. `config.js` aus `MAPTILER_KEY`-Secret schreiben (falls gesetzt)
-4. Static-Assets (index.html, public/, catalog.json, routes/, drafts/) auf gh-pages
+3. `pnpm install --frozen-lockfile && pnpm build` mit `VITE_MAPTILER_KEY` aus Secret
+4. `dist/` als Pages-Artifact deployen
 
-GitHub Secrets: `MAPTILER_KEY` (optional, Premium-Tiles), `ANTHROPIC_API_KEY` (für zukünftigen agent-review.yml).
+GitHub Secrets: `MAPTILER_KEY` (optional, Premium-Tiles via `VITE_MAPTILER_KEY`), `ANTHROPIC_API_KEY` (für zukünftigen agent-review.yml).
 
 ---
 
 ## Tests
 
 ```bash
-source .venv/bin/activate && pytest tests/ -v   # 18 Tests
+source .venv/bin/activate && pytest tests/ -v   # 18 Tests (Python — Validatoren + Catalog-Build)
+pnpm test                                       # 10 Tests (Vitest — transformRoute + applyFilters)
+pnpm test:e2e                                   # Playwright (E2E, wenn aufgesetzt)
 ```
 
-| Datei                            | Tests                         |
-| -------------------------------- | ----------------------------- |
-| `tests/test_validate_gpx.py`     | 5 — GPX-Validierung           |
-| `tests/test_validate_sidecar.py` | 5 — Sidecar-Schema            |
-| `tests/test_check_duplicates.py` | 4 — inkl. self-reference-Skip |
-| `tests/test_build_catalog.py`    | 4 — Katalog-Build             |
+| Datei                            | Tests                                           |
+| -------------------------------- | ----------------------------------------------- |
+| `tests/test_validate_gpx.py`     | 5 — GPX-Validierung                             |
+| `tests/test_validate_sidecar.py` | 5 — Sidecar-Schema (inkl. `gpx_redistribution`) |
+| `tests/test_check_duplicates.py` | 4 — inkl. self-reference-Skip                   |
+| `tests/test_build_catalog.py`    | 4 — Katalog-Build                               |
+| `tests-js/data.test.js`          | 10 — `transformRoute` + `applyFilters` (Vitest) |
 
 ---
 
 ## Lokale Entwicklung
 
 ```bash
+# Python (Validatoren + Catalog-Build)
 python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
-python scripts/build_catalog.py                                              # catalog.json bauen
-python3 -m http.server 5173 --directory public                               # Server starten
-# Frontend erwartet /catalog.json, /routes/, /drafts/ im Server-Root → Symlinks
-# in public/ pflegen oder anders mounten (vgl. .claude/launch.json).
+python scripts/build_catalog.py
+
+# Node (Frontend) — Vite Dev-Server mit HMR auf http://localhost:5173
+pnpm install
+pnpm dev
 ```
 
-Optional MapTiler-Key für Premium-Tiles (lokal): `public/config.js` mit `window.MAPTILER_KEY = "dein-key"` (gitignored). In CI über GitHub-Secret `MAPTILER_KEY`.
+Frontend liest `catalog.json`, `routes/`, `drafts/` aus dem Server-Root — Vite serviert sie über Symlinks in `public/` (`public/catalog.json` → `../catalog.json` etc.). Symlinks sind gitignored und werden bei Bedarf einmalig angelegt.
+
+Optional MapTiler-Key für Premium-Tiles (lokal): `.env.local` mit `VITE_MAPTILER_KEY=dein-key`. In CI über GitHub-Secret `MAPTILER_KEY`.
 
 ---
 

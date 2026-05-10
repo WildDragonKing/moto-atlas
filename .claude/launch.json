@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "motoatlas-dev",
-      "runtimeExecutable": ".venv/bin/python",
-      "runtimeArgs": ["scripts/dev-server.py"],
+      "runtimeExecutable": "node_modules/.bin/vite",
+      "runtimeArgs": ["--host", "127.0.0.1", "--port", "5173"],
       "port": 5173
     }
   ]

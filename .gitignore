@@ -11,8 +11,12 @@ __pycache__/
 .venv/
 public/config.js
 
-# Dev-time Symlinks fuer python3 -m http.server --directory public
+# Vite-Dev: catalog.json/routes/drafts werden ueber publicDir+fs.allow erreichbar
+# gemacht; alte http.server-Symlinks nicht mehr noetig, falls noch vorhanden.
 public/index.html
 public/catalog.json
 public/routes
 public/drafts
+
+# Vite cache
+.vite/
