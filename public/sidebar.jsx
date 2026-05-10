@@ -143,7 +143,7 @@ function RouteDetailPane({ route, onBack }) {
 
           <div className="popout-footer">
             {route.gpx_url
-              ? <button className="popout-btn primary" onClick={() => window.open('/'+route.gpx_url)}>↓ GPX</button>
+              ? <a className="popout-btn primary" href={'/'+route.gpx_url} download target="_self" rel="noopener">↓ GPX</a>
               : <button className="popout-btn primary" disabled>↓ GPX</button>
             }
             {route.gpx_url
