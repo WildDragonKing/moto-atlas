@@ -70,10 +70,13 @@ Jede Route besteht aus zwei Dateien mit gleichem Basisnamen:
   "id": "de-eifel-volcanic-route",
   "region": "eifel",
   "type": "offroad",
+  "source_gpx_url": "https://example.com/route.gpx",
   "modified": false,
   "modification_notes": ""
 }
 ```
+
+`source_gpx_url` ist nur für `link_only`-Routen relevant: ein **Hotlink** auf die GPX-Datei bei der Originalquelle (z.B. ADAC-CDN-Pfad einer einzelnen Route). Wenn gesetzt, zeigt das Frontend trotzdem einen GPX-Download-Button und der Scenic-Deeplink funktioniert. Bei Routen wo der Direct-Link nicht stabil/erreichbar ist (Wikiloc verlangt Login, viele SPAs), leerlassen — dann fällt das Frontend auf den reinen `source_url`-Link zurück. Hotlinking kann in den AGB einiger Anbieter problematisch sein, also case-by-case prüfen.
 
 Erlaubte `country`-Werte: `de`, `be`, `nl`, `fr`, `it`
 Erlaubte `type`-Werte: `offroad`, `touring`, `scenic`

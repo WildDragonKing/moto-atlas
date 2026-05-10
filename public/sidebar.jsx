@@ -142,21 +142,38 @@ function RouteDetailPane({ route, onBack }) {
           </div>
 
           <div className="popout-footer">
-            {route.gpx_url ? (
-              <>
-                <a className="popout-btn primary" href={'/'+route.gpx_url} download rel="noopener">↓ GPX</a>
-                {(() => {
-                  const absUrl = window.location.origin + '/' + route.gpx_url;
-                  const scenicUrl = 'https://scenicapp.space/Scenic/api/import/gpxurl?gpxurl=' + encodeURIComponent(absUrl) + '&source=MotoAtlas';
-                  return <a className="popout-btn" href={scenicUrl} target="_blank" rel="noopener">→ Scenic</a>;
-                })()}
-              </>
-            ) : (
-              // gpx_redistribution === 'link_only': nicht-redistributable Quelle → User zur Originalquelle leiten
-              <a className="popout-btn primary" href={route.source_url} target="_blank" rel="noopener">
-                ↗ Bei {route.source_name || 'Originalquelle'} herunterladen
-              </a>
-            )}
+            {(() => {
+              // Drei Faelle:
+              //  (a) allowed       → lokales GPX + Scenic-Deeplink (selbst-gehostet)
+              //  (b) link_only + source_gpx_url → Hotlink auf Quell-GPX + Scenic mit External-URL
+              //  (c) link_only ohne source_gpx_url → nur Source-URL als Fallback
+              const effGpx = route.gpx_url
+                ? window.location.origin + '/' + route.gpx_url
+                : route.source_gpx_url;
+              const scenicUrl = effGpx
+                ? 'https://scenicapp.space/Scenic/api/import/gpxurl?gpxurl=' + encodeURIComponent(effGpx) + '&source=MotoAtlas'
+                : null;
+              const gpxHref = route.gpx_url ? '/' + route.gpx_url : route.source_gpx_url;
+              const gpxLabel = route.gpx_url ? '↓ GPX' : `↓ GPX (via ${route.source_name || 'Quelle'})`;
+
+              return (
+                <>
+                  {gpxHref && (
+                    <a className="popout-btn primary" href={gpxHref}
+                       {...(route.gpx_url ? { download: true } : { target: '_blank' })}
+                       rel="noopener">{gpxLabel}</a>
+                  )}
+                  {scenicUrl && (
+                    <a className="popout-btn" href={scenicUrl} target="_blank" rel="noopener">→ Scenic</a>
+                  )}
+                  {route.source_url && (
+                    <a className="popout-btn source" href={route.source_url} target="_blank" rel="noopener">
+                      ↗ {route.source_name || 'Quelle'}
+                    </a>
+                  )}
+                </>
+              );
+            })()}
           </div>
         </div>
       </div>

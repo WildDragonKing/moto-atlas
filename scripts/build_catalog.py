@@ -23,7 +23,9 @@ def load_sidecars(folder: Path, status: str, repo_root: Path) -> list[dict]:
         gpx_file = jp.with_suffix(".gpx")
         if gpx_file.exists():
             # gpx_url nur exponieren wenn Quelle Redistribution erlaubt
-            # (Lizenz-Schutz; ADAC/Wikiloc/Komoot z.B. nicht-redistributable → link_only)
+            # (Lizenz-Schutz; ADAC/Wikiloc/Komoot z.B. nicht-redistributable → link_only).
+            # Bei link_only kann optional source_gpx_url (Hotlink) gesetzt sein —
+            # bleibt unveraendert im Sidecar und wird vom Frontend interpretiert.
             if data.get("gpx_redistribution") == "allowed":
                 data["gpx_url"] = str(gpx_file.relative_to(repo_root))
             try:

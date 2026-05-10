@@ -52,6 +52,7 @@ function transformRoute(r) {
     gpx_url: r.gpx_url || null,
     source_url: r.source_url || null,
     source_name: r.source_name || null,
+    source_gpx_url: r.source_gpx_url || null,
     gpx_redistribution: r.gpx_redistribution || 'link_only',
     images: [
       `${r.region || ''} ${r.type === 'offroad' ? 'trail' : 'road'}`,
