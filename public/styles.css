@@ -32,7 +32,9 @@ body { background: var(--cream); color: var(--ink); font-family: 'Lato', -apple-
 .maplibregl-ctrl-attrib a { color: var(--ink-soft) !important; }
 
 /* ROUTE MARKERS */
+/* Visible Marker bleibt 28x28, Hit-Area wird per ::before auf 44x44 vergroessert (WCAG 2.5.5). */
 .route-marker { --mc: #c4501e; position: relative; width: 28px; height: 28px; cursor: pointer; will-change: transform; }
+.route-marker::before { content: ''; position: absolute; inset: -8px; }
 .route-marker .rm-pulse { position: absolute; inset: 4px; border-radius: 50%; background: var(--mc); opacity: 0; animation: rmPulse 2.4s ease-out infinite; }
 @keyframes rmPulse { 0% { transform: scale(0.4); opacity: 0.55; } 80%, 100% { transform: scale(2.2); opacity: 0; } }
 .route-marker .rm-ring { position: absolute; inset: 6px; border-radius: 50%; background: var(--paper); border: 1.8px solid var(--mc); box-shadow: 0 2px 8px rgba(28,18,8,0.18); transition: inset 0.18s, border-width 0.18s; }
@@ -181,4 +183,13 @@ body { background: var(--cream); color: var(--ink); font-family: 'Lato', -apple-
   .sheet-grip { width: 40px; height: 4px; border-radius: 2px; background: var(--dust-soft); }
   .sheet-handle:hover .sheet-grip { background: var(--dust); }
   .detail-body { padding: 14px 18px 24px; }
+
+  /* WCAG 2.5.5: Touch-Targets >= 44x44 px auf Mobile */
+  .map-ctrl { width: 44px; height: 44px; font-size: 22px; }
+  .map-ctrl.reset { font-size: 18px; }
+  .f-chip { min-height: 36px; padding: 8px 12px; font-size: 11px; }
+  .route-row { min-height: 60px; padding: 14px 16px; }
+  .detail-back { min-height: 48px; padding: 14px 22px; }
+  .popout-btn { min-height: 44px; padding: 12px 16px; }
+  .nav-link { min-height: 44px; padding: 12px 14px; font-size: 10px; }
 }

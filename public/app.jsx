@@ -84,24 +84,40 @@ function MotoAtlasApp() {
       const emptyFC = { type: 'FeatureCollection', features: [] };
       // maxzoom: keine neuen Geometrie-Tiles ab z12 (Re-Use fuer Zoom 12-14)
       // tolerance/buffer: simplify-Optimierung fuer Polyline-Source
-      map.addSource('routes', { type: 'geojson', data: emptyFC, maxzoom: 12, tolerance: 0.5, buffer: 64 });
+      // promoteId: feature.id wird aus properties.id genommen — Voraussetzung fuer setFeatureState
+      map.addSource('routes', {
+        type: 'geojson', data: emptyFC,
+        maxzoom: 12, tolerance: 0.5, buffer: 64,
+        promoteId: 'id',
+      });
 
+      // 2 Layer statt 4: casing (Hintergrund) + base (mit feature-state-Expressions).
+      // Hover/Selected werden via map.setFeatureState({source, id}, {hover|selected})
+      // gesetzt — O(1), kein Layer-Re-Eval.
       map.addLayer({ id: 'routes-casing', type: 'line', source: 'routes',
-        paint: { 'line-color': '#faf6ec', 'line-width': 6, 'line-opacity': 0.9 },
+        paint: {
+          'line-color': '#faf6ec',
+          'line-width': ['case',
+            ['boolean', ['feature-state', 'selected'], false], 8,
+            ['boolean', ['feature-state', 'hover'], false], 7,
+            6
+          ],
+          'line-opacity': 0.9
+        },
         layout: { 'line-cap': 'round', 'line-join': 'round' }
       });
       map.addLayer({ id: 'routes-base', type: 'line', source: 'routes',
-        paint: { 'line-color': ['get', 'color'], 'line-width': 3, 'line-opacity': 0.85 },
-        layout: { 'line-cap': 'round', 'line-join': 'round' }
-      });
-      map.addLayer({ id: 'routes-selected', type: 'line', source: 'routes',
-        filter: ['==', ['get', 'id'], '__none__'],
-        paint: { 'line-color': ['get', 'color'], 'line-width': 6, 'line-opacity': 1, 'line-blur': 0.5 },
-        layout: { 'line-cap': 'round', 'line-join': 'round' }
-      });
-      map.addLayer({ id: 'routes-hovered', type: 'line', source: 'routes',
-        filter: ['==', ['get', 'id'], '__none__'],
-        paint: { 'line-color': ['get', 'color'], 'line-width': 5, 'line-opacity': 0.95 },
+        paint: {
+          'line-color': ['get', 'color'],
+          'line-width': ['case',
+            ['boolean', ['feature-state', 'selected'], false], 6,
+            ['boolean', ['feature-state', 'hover'], false], 5,
+            3
+          ],
+          // line-opacity wird vom Hover/Select-useE via setPaintProperty gesetzt
+          'line-opacity': 0.85,
+          'line-blur': ['case', ['boolean', ['feature-state', 'selected'], false], 0.5, 0]
+        },
         layout: { 'line-cap': 'round', 'line-join': 'round' }
       });
 
@@ -193,18 +209,31 @@ function MotoAtlasApp() {
     });
   }, [hoveredId, selectedId]);
 
-  // Filter + highlight line layers
+  // Hover/Selected via feature-state (O(1), kein Layer-Re-Eval).
+  // Dim-Modus (andere Features ausgrauen wenn was aktiv ist) via globalem
+  // line-opacity-Update auf routes-base — exakt 1 setPaintProperty pro
+  // Aktivitaetswechsel statt 3 Layer-Updates wie zuvor.
+  const lastFsRef = useR({ hover: null, sel: null });
   useE(() => {
     if (!mapReady || !mapRef.current) return;
     const map = mapRef.current;
-    if (map.getLayer('routes-hovered'))
-      map.setFilter('routes-hovered', ['==', ['get', 'id'], hoveredId || '__none__']);
-    if (map.getLayer('routes-selected'))
-      map.setFilter('routes-selected', ['==', ['get', 'id'], selectedId || '__none__']);
+    const src = 'routes';
+    const last = lastFsRef.current;
+    if (last.hover && last.hover !== hoveredId) map.setFeatureState({ source: src, id: last.hover }, { hover: false });
+    if (last.sel && last.sel !== selectedId) map.setFeatureState({ source: src, id: last.sel }, { selected: false });
+    if (hoveredId) map.setFeatureState({ source: src, id: hoveredId }, { hover: true });
+    if (selectedId) map.setFeatureState({ source: src, id: selectedId }, { selected: true });
+    lastFsRef.current = { hover: hoveredId, sel: selectedId };
+
+    const active = hoveredId || selectedId;
     if (map.getLayer('routes-base')) {
-      const active = hoveredId || selectedId;
-      map.setPaintProperty('routes-base', 'line-opacity',
-        active ? ['case', ['==', ['get', 'id'], active], 1, 0.25] : 0.85);
+      map.setPaintProperty('routes-base', 'line-opacity', active
+        ? ['case',
+            ['boolean', ['feature-state', 'selected'], false], 1,
+            ['boolean', ['feature-state', 'hover'], false], 0.95,
+            0.25]
+        : 0.85
+      );
     }
   }, [mapReady, hoveredId, selectedId]);
 
