@@ -58,12 +58,7 @@ function transformRoute(r) {
   };
 }
 
-const catalog = window.CATALOG || { routes: [], drafts: [] };
-const ROUTES = (catalog.routes || [])
-  .filter(r => r.geometry || r.bounds)
-  .map(transformRoute);
-
-window.ROUTES = ROUTES;
+window.transformRoute = transformRoute;
 window.COUNTRIES = COUNTRIES;
 window.TYPE_COLOR = TYPE_COLOR;
 window.MAP_BOUNDS = MAP_BOUNDS;

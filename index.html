@@ -22,29 +22,20 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 
+<script type="text/babel" src="/data.jsx"></script>
+<script type="text/babel" src="/sidebar.jsx"></script>
+<script type="text/babel" src="/app.jsx"></script>
+
 <script>
-  fetch('/catalog.json')
-    .then(r => r.ok ? r.json() : { routes: [], drafts: [] })
-    .catch(() => ({ routes: [], drafts: [] }))
-    .then(cat => {
-      window.CATALOG = cat;
-      let loaded = 0;
-      ['/data.jsx', '/sidebar.jsx', '/app.jsx'].forEach(src => {
-        const s = document.createElement('script');
-        s.type = 'text/babel';
-        s.src = src;
-        s.onload = () => {
-          loaded++;
-          if (loaded === 3) {
-            setTimeout(() => {
-              const root = ReactDOM.createRoot(document.getElementById('root'));
-              root.render(React.createElement(window.MotoAtlasApp));
-            }, 80);
-          }
-        };
-        document.body.appendChild(s);
-      });
-    });
+  // Poll until Babel has transpiled all JSX and set window.MotoAtlasApp
+  (function poll() {
+    if (window.MotoAtlasApp && window.Sidebar && window.transformRoute) {
+      ReactDOM.createRoot(document.getElementById('root'))
+        .render(React.createElement(window.MotoAtlasApp));
+    } else {
+      setTimeout(poll, 50);
+    }
+  })();
 </script>
 </body>
 </html>
