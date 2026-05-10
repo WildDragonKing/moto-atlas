@@ -26,6 +26,10 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: true,
+    cssMinify: false, // lightningcss-darwin-arm64.node + esbuild fehlen in vp brew bottle
+  },
+  css: {
+    transformer: "postcss", // statt lightningcss (siehe oben)
   },
 
   // -- Vitest -------------------------------------------------------------

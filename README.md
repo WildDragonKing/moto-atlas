@@ -40,7 +40,7 @@ pnpm pytest      # vp run pytest — Python-Tests (mit Cache)
 pnpm build       # Produktions-Build nach dist/
 ```
 
-> **Hinweis:** `vp dev` / `vp build` werden aktuell **nicht** als Wrapper genutzt, weil das bundled Vite 8 von Vite+ inkompatibel mit `@sveltejs/vite-plugin-svelte@4` (Svelte-5-Support) ist und INFORM-Artifactory `@esbuild/darwin-arm64@>=0.24` blockt. `pnpm dev`/`pnpm build` rufen lokales Vite 5 auf. Alle anderen vp-Befehle laufen normal.
+> **Stack-Pins (Artifactory-Workarounds):** INFORM Artifactory blockt `@esbuild/darwin-arm64@>=0.24` (403). Lösung: `pnpm.overrides.esbuild = "0.21.5"` + manueller Symlink `node_modules/@esbuild/darwin-arm64`, `pnpm install --no-optional`. Außerdem fehlt `lightningcss-darwin-arm64.node` in der vp brew bottle → `build.cssMinify: false` + `css.transformer: "postcss"`. Details siehe `CLAUDE.md`.
 
 ## Route hinzufügen
 

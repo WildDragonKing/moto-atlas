@@ -86,13 +86,22 @@ Erlaubte `gpx_redistribution`-Werte: `allowed`, `link_only`
 
 ## Frontend
 
-**Stack:** Vite 5 + Svelte 5 (Runes) + MapLibre GL. **Vite+ (`vp`)** als unified Toolchain für Lint/Format/Type-Check/Test (Oxlint + Oxfmt + tsgo + Vitest). Kein SvelteKit, kein React, kein Babel-Standalone mehr. Build-Output: ~240 KB gzipped (vs ~1.3 MB unter dem alten CDN-React-Setup).
+**Stack:** Vite 6 + Svelte 5 (Runes) + MapLibre GL. **Vite+ (`vp`)** als unified Toolchain für Dev/Build/Lint/Format/Type-Check/Test (Rolldown + Oxlint + Oxfmt + tsgo + Vitest). Kein SvelteKit, kein React, kein Babel-Standalone mehr. Build-Output: ~236 KB gzipped (vs ~1.3 MB unter dem alten CDN-React-Setup).
 
-**Vite+ (`vp`) — was wir nutzen, was wir umgehen:**
+**Vite+ Workflow (kompletter Stack):**
 
-- `vp check` / `vp lint` / `vp fmt` / `vp test` → primärer Workflow. Single-Config (`vite.config.js`) deckt Vite + Vitest + Run-Tasks ab.
-- `vp dev` / `vp build` aktuell **nicht** im Einsatz — vp bundled Vite 8, das mit `@sveltejs/vite-plugin-svelte@4` (Svelte-5-kompatibel) bricht (`mount() not available on server`). Vite 6/8 würde plugin-svelte 5/7 erlauben, aber INFORM Artifactory blockt `@esbuild/darwin-arm64@>=0.24` mit 403. Workaround: lokales Vite 5 für Dev/Build, vp für alles andere.
-- `.oxlintrc.json` + `.oxfmtignore` halten die unified-Check-Pipeline grün.
+- `vp dev` / `vp build` / `vp preview` — Rolldown-native Build in ~260 ms
+- `vp check` / `vp lint` / `vp fmt` / `vp test` — Format/Lint/Type-Check/Tests in einem Pass
+- `vp run catalog` / `vp run pytest` — Task-Runner mit transparentem Cache
+- Single-Config (`vite.config.js`) deckt Vite + Vitest + Run-Tasks ab; `.oxlintrc.json` + `.oxfmtignore` halten die Check-Pipeline grün
+
+**Stack-Pins (Artifactory-Workarounds, dokumentiert für Reproduzierbarkeit):**
+
+- `vite@^6` + `@sveltejs/vite-plugin-svelte@^5` für Svelte 5
+- `pnpm.overrides.esbuild = "0.21.5"` + manueller Symlink `node_modules/@esbuild/darwin-arm64 → 0.21.5` (INFORM-Artifactory blockt `@esbuild/darwin-arm64@>=0.24` mit 403; ältere Version ist API-kompatibel genug)
+- `pnpm install --no-optional` damit der 403-Pfad für die optional dep nicht versucht wird
+- `build.cssMinify: false` + `css.transformer: "postcss"` weil die vp brew bottle `lightningcss-darwin-arm64.node` nicht mitliefert
+- `resolve.conditions: ["browser"]` + `optimizeDeps.exclude: ["svelte"]` damit Svelte 5 nicht den Server-Build picked
 
 - `index.html` — Vite-Entry, lädt nur `src/main.js` + Fonts
 - `src/main.js` — Mount der App
@@ -160,7 +169,7 @@ pnpm catalog                         # vp run catalog (cached) — baut catalog.
 
 # Node (Frontend) — Vite Dev-Server mit HMR auf http://localhost:5173
 pnpm install
-pnpm dev                             # lokales Vite 5 (siehe Hinweis zur Stack-Wahl oben)
+pnpm dev                             # vp dev (Vite 6 + Rolldown + HMR)
 pnpm check                           # vor Commit: Lint + Format + Type-Check
 ```
 

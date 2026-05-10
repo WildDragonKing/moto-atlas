@@ -20,7 +20,12 @@ pnpm catalog      # vp run catalog — catalog.json bauen (mit Cache)
 pnpm pytest       # vp run pytest — Python-Tests (mit Cache)
 ```
 
-**Build-Hinweis:** `vp dev` / `vp build` werden aktuell nicht genutzt, weil das bundled Vite 8 von Vite+ inkompatibel mit `@sveltejs/vite-plugin-svelte@4` (Svelte-5-Support) ist und der INFORM-Artifactory-Proxy `@esbuild/darwin-arm64@>=0.24` (Vite 6+ Voraussetzung) mit 403 blockt. Sobald Vite+ stabil ist oder Artifactory neuere esbuild-Versionen freischaltet, kann auf `vp dev`/`vp build` zurückgewechselt werden. Bis dahin werden Dev/Build über lokales Vite 5 gefahren — alle anderen vp-Befehle funktionieren normal.
+**Stack-Pins (Artifactory-Workarounds, dokumentiert in CLAUDE.md):**
+
+- `vite@^6` + `@sveltejs/vite-plugin-svelte@^5` (Svelte-5-Support)
+- `pnpm.overrides.esbuild = "0.21.5"` + Symlink `node_modules/@esbuild/darwin-arm64` (INFORM Artifactory blockt `@esbuild/darwin-arm64@>=0.24` mit 403)
+- `pnpm install --no-optional` damit pnpm den blockierten Tarball nicht versucht
+- `build.cssMinify: false` + `css.transformer: "postcss"` (vp brew bottle liefert `lightningcss-darwin-arm64.node` nicht mit)
 
 ## Stack-Conventions
 
