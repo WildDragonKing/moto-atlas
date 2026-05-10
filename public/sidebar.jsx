@@ -142,18 +142,21 @@ function RouteDetailPane({ route, onBack }) {
           </div>
 
           <div className="popout-footer">
-            {route.gpx_url
-              ? <a className="popout-btn primary" href={'/'+route.gpx_url} download rel="noopener">↓ GPX</a>
-              : <button className="popout-btn primary" disabled>↓ GPX</button>
-            }
-            {route.gpx_url
-              ? (() => {
+            {route.gpx_url ? (
+              <>
+                <a className="popout-btn primary" href={'/'+route.gpx_url} download rel="noopener">↓ GPX</a>
+                {(() => {
                   const absUrl = window.location.origin + '/' + route.gpx_url;
                   const scenicUrl = 'https://scenicapp.space/Scenic/api/import/gpxurl?gpxurl=' + encodeURIComponent(absUrl) + '&source=MotoAtlas';
                   return <a className="popout-btn" href={scenicUrl} target="_blank" rel="noopener">→ Scenic</a>;
-                })()
-              : <button className="popout-btn" disabled>→ Scenic</button>
-            }
+                })()}
+              </>
+            ) : (
+              // gpx_redistribution === 'link_only': nicht-redistributable Quelle → User zur Originalquelle leiten
+              <a className="popout-btn primary" href={route.source_url} target="_blank" rel="noopener">
+                ↗ Bei {route.source_name || 'Originalquelle'} herunterladen
+              </a>
+            )}
           </div>
         </div>
       </div>

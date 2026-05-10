@@ -3,9 +3,10 @@
 import sys, json
 from pathlib import Path
 
-REQUIRED = {"name", "country", "source_url", "source_name"}
+REQUIRED = {"name", "country", "source_url", "source_name", "gpx_redistribution"}
 VALID_COUNTRIES = {"de", "be", "nl", "fr", "it"}
 VALID_TYPES = {"offroad", "touring", "scenic"}
+VALID_REDISTRIBUTION = {"allowed", "link_only"}
 
 
 def validate(path: Path) -> list[str]:
@@ -24,6 +25,12 @@ def validate(path: Path) -> list[str]:
 
     if "type" in data and data["type"] not in VALID_TYPES:
         errors.append(f"Ungueltiger type '{data['type']}' — erlaubt: {', '.join(sorted(VALID_TYPES))}")
+
+    if "gpx_redistribution" in data and data["gpx_redistribution"] not in VALID_REDISTRIBUTION:
+        errors.append(
+            f"Ungueltiges gpx_redistribution '{data['gpx_redistribution']}' — "
+            f"erlaubt: {', '.join(sorted(VALID_REDISTRIBUTION))}"
+        )
 
     if data.get("modified") and not data.get("modification_notes"):
         errors.append("modified=true aber modification_notes ist leer")

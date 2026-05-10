@@ -2,5 +2,6 @@
   "name": "Minimal Route",
   "country": "de",
   "source_url": "https://example.com/route",
-  "source_name": "Wikiloc"
+  "source_name": "Wikiloc",
+  "gpx_redistribution": "link_only"
 }

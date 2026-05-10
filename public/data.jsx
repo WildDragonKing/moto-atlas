@@ -50,6 +50,9 @@ function transformRoute(r) {
     season: 'Apr — Okt',
     path: coords,
     gpx_url: r.gpx_url || null,
+    source_url: r.source_url || null,
+    source_name: r.source_name || null,
+    gpx_redistribution: r.gpx_redistribution || 'link_only',
     images: [
       `${r.region || ''} ${r.type === 'offroad' ? 'trail' : 'road'}`,
       `${r.name} panorama`,

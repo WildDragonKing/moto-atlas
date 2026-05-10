@@ -13,5 +13,10 @@
   },
   "dependencies": {
     "maplibre-gl": "^4.7.1"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

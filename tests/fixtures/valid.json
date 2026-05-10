@@ -6,6 +6,7 @@
   "type": "offroad",
   "source_url": "https://wikiloc.com/trails/test-123",
   "source_name": "Wikiloc",
+  "gpx_redistribution": "link_only",
   "modified": false,
   "modification_notes": ""
 }

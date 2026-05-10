@@ -6,6 +6,7 @@
   "type": "offroad",
   "source_url": "https://transeurotrail.org/germany/",
   "source_name": "Trans Euro Trail",
+  "gpx_redistribution": "allowed",
   "modified": false,
   "modification_notes": "",
   "rating": 4.8,

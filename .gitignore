@@ -10,3 +10,9 @@ __pycache__/
 *.pyc
 .venv/
 public/config.js
+
+# Dev-time Symlinks fuer python3 -m http.server --directory public
+public/index.html
+public/catalog.json
+public/routes
+public/drafts

@@ -22,7 +22,10 @@ def load_sidecars(folder: Path, status: str, repo_root: Path) -> list[dict]:
             data["id"] = jp.stem
         gpx_file = jp.with_suffix(".gpx")
         if gpx_file.exists():
-            data["gpx_url"] = str(gpx_file.relative_to(repo_root))
+            # gpx_url nur exponieren wenn Quelle Redistribution erlaubt
+            # (Lizenz-Schutz; ADAC/Wikiloc/Komoot z.B. nicht-redistributable → link_only)
+            if data.get("gpx_redistribution") == "allowed":
+                data["gpx_url"] = str(gpx_file.relative_to(repo_root))
             try:
                 import gpxpy as _gpxpy
                 with open(gpx_file, encoding="utf-8") as gf:

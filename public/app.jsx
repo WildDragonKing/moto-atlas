@@ -3,13 +3,12 @@
 const { useState: useS, useEffect: useE, useRef: useR, useMemo: useM, useCallback: useC } = React;
 
 const MAPTILER_KEY = window.MAPTILER_KEY || '';
+// Default: OpenFreeMap Liberty (Vector, kein API-Key, ~3-5x weniger Bytes/Viewport
+// als OSM-Raster, schneller Re-Render bei Zoom). MapTiler nur als Opt-In Premium.
+// Siehe docs/research/2026-05-10-maplibre-tile-performance.md
 const MAP_STYLE = MAPTILER_KEY
   ? `https://api.maptiler.com/maps/outdoor-v2/style.json?key=${MAPTILER_KEY}`
-  : {
-      version: 8,
-      sources: { carto: { type: 'raster', tiles: ['https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png'], tileSize: 256, attribution: '© OpenStreetMap · © CARTO', maxzoom: 19 } },
-      layers: [{ id: 'bg', type: 'background', paint: { 'background-color': '#f5efe0' } }, { id: 'carto', type: 'raster', source: 'carto', paint: { 'raster-opacity': 0.85, 'raster-saturation': -0.25 } }]
-    };
+  : 'https://tiles.openfreemap.org/styles/liberty';
 
 function makeMarkerEl(color) {
   const el = document.createElement('div');
@@ -63,17 +62,28 @@ function MotoAtlasApp() {
       style: MAP_STYLE,
       center: [7.5, 48.5],
       zoom: 4.6,
-      minZoom: 2,
+      minZoom: 4,                  // Europa-Bounds: <4 nutzlos
       maxZoom: 14,
+      fadeDuration: 0,             // 300ms Cross-Fade → 0
+      refreshExpiredTiles: false,  // bei statischen Tiles unnoetig
       attributionControl: { compact: true },
       pitchWithRotate: false,
       dragRotate: false,
+      transformRequest: (url, resourceType) => {
+        // Vector-Tiles + Sprites immutable per URL → Browser-Cache aggressiv nutzen
+        if (resourceType === 'Tile' || resourceType === 'SpriteImage' || resourceType === 'SpriteJSON') {
+          return { url, cache: 'force-cache' };
+        }
+        return { url };
+      },
     });
     mapRef.current = map;
 
     map.on('load', () => {
       const emptyFC = { type: 'FeatureCollection', features: [] };
-      map.addSource('routes', { type: 'geojson', data: emptyFC });
+      // maxzoom: keine neuen Geometrie-Tiles ab z12 (Re-Use fuer Zoom 12-14)
+      // tolerance/buffer: simplify-Optimierung fuer Polyline-Source
+      map.addSource('routes', { type: 'geojson', data: emptyFC, maxzoom: 12, tolerance: 0.5, buffer: 64 });
 
       map.addLayer({ id: 'routes-casing', type: 'line', source: 'routes',
         paint: { 'line-color': '#faf6ec', 'line-width': 6, 'line-opacity': 0.9 },

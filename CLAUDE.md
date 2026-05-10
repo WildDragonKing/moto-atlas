@@ -14,9 +14,11 @@ archive/{land}/        ← Geparkt, nie gelöscht, nicht im Katalog
 catalog.json           ← CI-generiert, NICHT committen (in .gitignore)
 collections/*.zip      ← CI-generiert, NICHT committen
 scripts/               ← Python-Validierung + Shell-Helper
-src/                   ← Vite-Frontend (MapLibre GL)
+public/                ← Frontend (CDN-React + MapLibre GL, text/babel inline)
 .github/workflows/     ← validate.yml + build-deploy.yml
 ```
+
+Frontend ist bewusst **build-frei**: CDN-React + `@babel/standalone` inline-Transpile, kein Vite-Build, kein npm-Install für Lokalentwicklung nötig. Trade-off bewusst akzeptiert — Babel-Standalone ist ~1 MB und transpiliert JSX im Browser, was den ersten Pageload verlangsamt. Wenn Performance kritisch wird, ist eine Vite-Migration der dokumentierte Plan-B (vgl. `docs/research/2026-05-10-vite-static-deploy-performance.md`).
 
 Jede Route besteht aus zwei Dateien mit gleichem Basisnamen:
 
@@ -48,12 +50,15 @@ Jede Route besteht aus zwei Dateien mit gleichem Basisnamen:
   "name": "Route Name",
   "country": "de",
   "source_url": "https://…",
-  "source_name": "ADAC"
+  "source_name": "ADAC",
+  "gpx_redistribution": "allowed"
 }
 ```
 
+`gpx_redistribution` ist Lizenz-Schalter. `"allowed"` = GPX wird in catalog.json verlinkt und im Frontend zum Download angeboten. `"link_only"` = `gpx_url` wird **nicht** in catalog gerendert, das Frontend zeigt stattdessen einen Link auf `source_url`. Default ist `link_only` (Vorsicht zuerst) — Redistribution-Rechte zwingend prüfen, bevor `allowed` gesetzt wird. ADAC NavBikeTour, Wikiloc, Komoot: **nicht** redistributable → `link_only`. Trans Euro Trail, eigene Tracks: `allowed`.
+
 **Von CI auto-befüllt** (nie manuell setzen):
-`distance_km`, `elevation_gain_m`, `duration_h`, `bounds`, `geometry`, `gpx_url`, `status`, `id`
+`distance_km`, `elevation_gain_m`, `duration_h`, `bounds`, `geometry`, `gpx_url` (nur bei `allowed`), `status`, `id`
 
 **Von Agent befüllt** (agent-review.yml, Plan 3):
 `rating`, `agent_review`, `difficulty`, `surface`, `offroad_pct`, `reviewed_at`
@@ -72,20 +77,22 @@ Jede Route besteht aus zwei Dateien mit gleichem Basisnamen:
 
 Erlaubte `country`-Werte: `de`, `be`, `nl`, `fr`, `it`
 Erlaubte `type`-Werte: `offroad`, `touring`, `scenic`
+Erlaubte `gpx_redistribution`-Werte: `allowed`, `link_only`
 
 ---
 
 ## Frontend
 
-- `index.html` — App-Shell (Repo-Root, Vite-Einstieg)
-- `src/main.js` — Hash-Router: `#/` → Katalog, `#/map` → Karte
-- `src/catalog.js` — Route-Cards aus catalog.json (`loadCatalog`, `initCatalog`)
-- `src/filter.js` — reaktiver Filter-State (`filterRoutes`, `renderCountryTabs`, `onFilterChange`)
-- `src/map-view.js` — MapLibre GL Karte (`initMap`, `destroyMap`)
-- `src/tiles.js` — MapTiler/Fallback-Tiles (`getBaseStyle`, `hasMaptiler`)
-- `src/style.css` — MotoAtlas-Theme (Fraunces + JetBrains Mono, Pergament-Palette)
+- `index.html` — App-Shell, lädt CDN-React + MapLibre + Babel-Standalone
+- `public/data.jsx` — Konstanten, `transformRoute`, `applyFilters`
+- `public/sidebar.jsx` — Routenliste, Filter-Chips, RouteDetailPane
+- `public/app.jsx` — MapLibre-Init, Layer-Logik, OSRM-Road-Snapping
+- `public/styles.css` — MotoAtlas-Theme (Fraunces + JetBrains Mono, Pergament-Palette)
+- `public/config.js` — von CI generiert (`window.MAPTILER_KEY`), gitignored
 
-**XSS-Regel:** Kein `innerHTML` für Userdaten — ausschließlich `textContent` und DOM-API.
+Default-Tile-Provider: **OpenFreeMap Liberty** (Vector, ohne Key). MapTiler Outdoor nur wenn `MAPTILER_KEY`-Secret in CI gesetzt. Performance-Settings in `app.jsx`: `fadeDuration: 0`, `refreshExpiredTiles: false`, `transformRequest`-Cache für Tiles, GeoJSON-Source mit `maxzoom: 12 / tolerance: 0.5`. Details: `docs/research/2026-05-10-maplibre-tile-performance.md`.
+
+**XSS-Regel:** Alle Sidecar-Daten ausschließlich via JSX-Interpolation rendern (React escaped automatisch). Keine unsicheren HTML-Inject-APIs verwenden.
 
 ---
 
@@ -101,10 +108,10 @@ Erlaubte `type`-Werte: `offroad`, `touring`, `scenic`
 
 1. `build_catalog.py` → catalog.json mit Geometrie (vereinfacht, max 500 Punkte/Route)
 2. ZIP-Collections für Scenic (pro Land+Typ + all-offroad + all-routes)
-3. Vite Build → `dist/`
-4. Deploy auf GitHub Pages (`gh-pages` Branch)
+3. `config.js` aus `MAPTILER_KEY`-Secret schreiben (falls gesetzt)
+4. Static-Assets (index.html, public/, catalog.json, routes/, drafts/) auf gh-pages
 
-GitHub Secret: `ANTHROPIC_API_KEY` (für zukünftigen agent-review.yml)
+GitHub Secrets: `MAPTILER_KEY` (optional, Premium-Tiles), `ANTHROPIC_API_KEY` (für zukünftigen agent-review.yml).
 
 ---
 
@@ -126,25 +133,22 @@ source .venv/bin/activate && pytest tests/ -v   # 18 Tests
 ## Lokale Entwicklung
 
 ```bash
-pnpm install
 python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
-python scripts/build_catalog.py   # catalog.json lokal bauen
-pnpm dev                           # http://localhost:5173
+python scripts/build_catalog.py                                              # catalog.json bauen
+python3 -m http.server 5173 --directory public                               # Server starten
+# Frontend erwartet /catalog.json, /routes/, /drafts/ im Server-Root → Symlinks
+# in public/ pflegen oder anders mounten (vgl. .claude/launch.json).
 ```
 
-Optional MapTiler-Key für bessere Karten-Tiles:
-
-```bash
-echo "VITE_MAPTILER_KEY=dein-key" > .env.local
-```
+Optional MapTiler-Key für Premium-Tiles (lokal): `public/config.js` mit `window.MAPTILER_KEY = "dein-key"` (gitignored). In CI über GitHub-Secret `MAPTILER_KEY`.
 
 ---
 
-## Routen-Qualität
+## Routen-Qualität & Lizenz
 
 Nur echte, von Menschen gefahrene oder sorgfältig geplante Routen. **Keine algorithmisch generierten Tracks** (kein Kurviger-API-Output, keine namenlosen OSM-Track-Dumps). `source_url` ist Pflichtfeld.
 
-Gute Quellen: ADAC NavBikeTour, Trans Euro Trail, Wikiloc (manuell, einzeln via `collect.sh`).
+**Lizenz-Disziplin**: Jeder Sidecar braucht `gpx_redistribution`. ADAC NavBikeTour, Wikiloc, Komoot, BikeMap → `link_only` (Redistribution-Verbot in den AGB). Trans Euro Trail (CC BY-SA), eigene Tracks → `allowed`. Bei Unsicherheit: `link_only`. Details: `docs/research/2026-05-10-gpx-catalog-static-best-practices.md`.
 
 ---
 
