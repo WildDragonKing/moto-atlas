@@ -149,9 +149,13 @@ Optional MapTiler-Key für Premium-Tiles (lokal): `public/config.js` mit `window
 
 ## Routen-Qualität & Lizenz
 
-Nur echte, von Menschen gefahrene oder sorgfältig geplante Routen. **Keine algorithmisch generierten Tracks** (kein Kurviger-API-Output, keine namenlosen OSM-Track-Dumps). `source_url` ist Pflichtfeld.
+**Quellen-Policy:** Nur Routen aus Quellen mit expliziter Redistribution-Erlaubnis. Konkret: **eigene gefahrene Tracks**, Tracks aus dem Freundeskreis (mit Einverständnis), oder explizit frei lizenzierte Sammlungen (CC BY / CC BY-SA, Public Domain, Trans Euro Trail). **Keine** ADAC-NavBikeTour-Tracks, Wikiloc-Downloads, Komoot-Routen, BikeMap, oder ähnlich AGB-geschützte Bestände — auch nicht als Hotlink, da deren Nutzungsbedingungen "use on other websites" untersagen (vgl. [ADAC Reisen Nutzungsbedingungen](https://www.adacreisen.de/rechtliches/nutzungsbedingungen)). Algorithmisch generierte Tracks (Kurviger-API, namenlose OSM-Dumps) sind ebenfalls ausgeschlossen.
 
-**Lizenz-Disziplin**: Jeder Sidecar braucht `gpx_redistribution`. ADAC NavBikeTour, Wikiloc, Komoot, BikeMap → `link_only` (Redistribution-Verbot in den AGB). Trans Euro Trail (CC BY-SA), eigene Tracks → `allowed`. Bei Unsicherheit: `link_only`. Details: `docs/research/2026-05-10-gpx-catalog-static-best-practices.md`.
+**Sidecar-Pflicht**: `gpx_redistribution` muss bei jeder Route gesetzt sein. Default `link_only` (= falls die Quelle keine Redistribution erlaubt, würde Hotlink nötig — Frontend zeigt dann nur den `source_url`-Link). Real verwendet das Repo aktuell ausschließlich `allowed`-Quellen.
+
+**Quellen-Workflow**: Neue Route per `scripts/collect.sh <gpx-url|datei> --country de` ins `drafts/`-Verzeichnis. Sidecar manuell auffüllen (`name`, `source_url`, `source_name`, `gpx_redistribution: allowed`, optional `region`, `type`). Promote nach Review per `scripts/promote.sh drafts/de/route.gpx`.
+
+Details: `docs/research/2026-05-10-gpx-catalog-static-best-practices.md`.
 
 ---
 

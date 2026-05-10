@@ -36,12 +36,13 @@ Jede Route braucht eine `.gpx` + `.json` Sidecar-Datei. Minimales Sidecar:
 {
   "name": "Routenname",
   "country": "de",
-  "source_url": "https://...",
-  "source_name": "ADAC"
+  "source_url": "https://example.org/meine-tour",
+  "source_name": "Eigene Tour",
+  "gpx_redistribution": "allowed"
 }
 ```
 
-Nur echte, von Menschen gefahrene oder geplante Routen. Keine algorithmisch generierten Tracks. `source_url` ist Pflicht.
+Nur echte, von Menschen gefahrene oder geplante Routen — vorzugsweise eigene Tracks oder Tracks aus dem Freundeskreis. Keine algorithmisch generierten Tracks. **Keine Inhalte aus AGB-geschützten Quellen** (ADAC NavBikeTour, Wikiloc, Komoot, BikeMap) — auch nicht als Hotlink. `source_url`, `source_name`, `gpx_redistribution` sind Pflicht.
 
 ## Struktur
 
