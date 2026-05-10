@@ -10,6 +10,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://tiles.openfreemap.org" crossorigin>
 <link rel="dns-prefetch" href="https://router.project-osrm.org">
+<!-- Style + Glyph/Sprite-Manifest parallel zum JS-Parsing laden -->
+<link rel="preload" href="https://tiles.openfreemap.org/styles/liberty" as="fetch" crossorigin>
+<!-- catalog.json wird vom App-Boot fetcht — parallel zum Babel-Transpile starten -->
+<link rel="preload" href="/catalog.json" as="fetch" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,400&family=JetBrains+Mono:wght@400;500;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">

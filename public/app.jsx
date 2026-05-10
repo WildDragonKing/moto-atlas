@@ -66,6 +66,7 @@ function MotoAtlasApp() {
       maxZoom: 14,
       fadeDuration: 0,             // 300ms Cross-Fade → 0
       refreshExpiredTiles: false,  // bei statischen Tiles unnoetig
+      prefetchZoomDelta: 5,        // Default 4 → aggressivere Lower-Zoom-Prefetches
       attributionControl: { compact: true },
       pitchWithRotate: false,
       dragRotate: false,
