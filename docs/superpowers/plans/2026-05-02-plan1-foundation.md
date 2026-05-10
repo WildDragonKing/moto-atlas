@@ -1292,8 +1292,8 @@ git commit -m "ci: validate.yml + build-deploy.yml"
       <div class="hero-eyebrow">Motorrad · Offroad · 5 Länder</div>
       <h1>Die <em>besten</em><br />Routen.<br />Kuratiert.</h1>
       <p class="hero-desc">
-        Offroad-Tracks und Touren für DE, BE, NL, FR und IT — agent-reviewed,
-        direkt in Scenic importierbar.
+        Offroad-Tracks und Touren für DE, BE, NL, FR und IT — agent-reviewed, direkt in Scenic
+        importierbar.
       </p>
       <div class="hero-stats">
         <div class="stat">
@@ -1372,18 +1372,13 @@ export function onFilterChange(fn) {
 }
 
 export function filterRoutes(routes) {
-  return routes.filter(
-    (r) => state.country === "all" || r.country === state.country,
-  );
+  return routes.filter((r) => state.country === "all" || r.country === state.country);
 }
 
 export function renderCountryTabs(container, routes) {
   container.textContent = "";
   COUNTRIES.forEach((c) => {
-    const count =
-      c.id === "all"
-        ? routes.length
-        : routes.filter((r) => r.country === c.id).length;
+    const count = c.id === "all" ? routes.length : routes.filter((r) => r.country === c.id).length;
     if (count === 0 && c.id !== "all") return;
     const btn = document.createElement("button");
     btn.className = "country-tab" + (state.country === c.id ? " active" : "");
@@ -1572,8 +1567,7 @@ export function initCatalog(catalog) {
   const draftCount = document.getElementById("draft-count");
   if (drafts.length > 0 && draftsSection) {
     draftsSection.style.display = "";
-    if (draftCount)
-      draftCount.textContent = `${drafts.length} Routen warten auf Review`;
+    if (draftCount) draftCount.textContent = `${drafts.length} Routen warten auf Review`;
     if (draftGrid) drafts.forEach((d) => draftGrid.appendChild(renderCard(d)));
   }
 

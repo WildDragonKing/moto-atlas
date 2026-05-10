@@ -86,7 +86,13 @@ Erlaubte `gpx_redistribution`-Werte: `allowed`, `link_only`
 
 ## Frontend
 
-**Stack:** Vite 5 + Svelte 5 (Runes) + MapLibre GL. Kein SvelteKit, kein React, kein Babel-Standalone-Inline-Transpile mehr. Build-Output: ~240 KB gzipped (vs ~1.3 MB unter dem alten CDN-React-Setup).
+**Stack:** Vite 5 + Svelte 5 (Runes) + MapLibre GL. **Vite+ (`vp`)** als unified Toolchain für Lint/Format/Type-Check/Test (Oxlint + Oxfmt + tsgo + Vitest). Kein SvelteKit, kein React, kein Babel-Standalone mehr. Build-Output: ~240 KB gzipped (vs ~1.3 MB unter dem alten CDN-React-Setup).
+
+**Vite+ (`vp`) — was wir nutzen, was wir umgehen:**
+
+- `vp check` / `vp lint` / `vp fmt` / `vp test` → primärer Workflow. Single-Config (`vite.config.js`) deckt Vite + Vitest + Run-Tasks ab.
+- `vp dev` / `vp build` aktuell **nicht** im Einsatz — vp bundled Vite 8, das mit `@sveltejs/vite-plugin-svelte@4` (Svelte-5-kompatibel) bricht (`mount() not available on server`). Vite 6/8 würde plugin-svelte 5/7 erlauben, aber INFORM Artifactory blockt `@esbuild/darwin-arm64@>=0.24` mit 403. Workaround: lokales Vite 5 für Dev/Build, vp für alles andere.
+- `.oxlintrc.json` + `.oxfmtignore` halten die unified-Check-Pipeline grün.
 
 - `index.html` — Vite-Entry, lädt nur `src/main.js` + Fonts
 - `src/main.js` — Mount der App
@@ -126,9 +132,10 @@ GitHub Secrets: `MAPTILER_KEY` (optional, Premium-Tiles via `VITE_MAPTILER_KEY`)
 ## Tests
 
 ```bash
-source .venv/bin/activate && pytest tests/ -v   # 18 Tests (Python — Validatoren + Catalog-Build)
-pnpm test                                       # 10 Tests (Vitest — transformRoute + applyFilters)
-pnpm test:e2e                                   # Playwright (E2E, wenn aufgesetzt)
+pnpm pytest                                     # vp run pytest — 18 Tests (cached)
+pnpm test                                       # vp test run — 10 Vitest Tests
+pnpm test:e2e                                   # vp dlx playwright test
+pnpm check                                      # vp check — Format + Lint + Type-Check
 ```
 
 | Datei                            | Tests                                           |
@@ -144,13 +151,17 @@ pnpm test:e2e                                   # Playwright (E2E, wenn aufgeset
 ## Lokale Entwicklung
 
 ```bash
+# Vite+ installieren (einmalig)
+brew install vite-plus              # oder curl -fsSL https://vite.plus | bash
+
 # Python (Validatoren + Catalog-Build)
 python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt
-python scripts/build_catalog.py
+pnpm catalog                         # vp run catalog (cached) — baut catalog.json
 
 # Node (Frontend) — Vite Dev-Server mit HMR auf http://localhost:5173
 pnpm install
-pnpm dev
+pnpm dev                             # lokales Vite 5 (siehe Hinweis zur Stack-Wahl oben)
+pnpm check                           # vor Commit: Lint + Format + Type-Check
 ```
 
 Frontend liest `catalog.json`, `routes/`, `drafts/` aus dem Server-Root — Vite serviert sie über Symlinks in `public/` (`public/catalog.json` → `../catalog.json` etc.). Symlinks sind gitignored und werden bei Bedarf einmalig angelegt.

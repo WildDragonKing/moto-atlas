@@ -1,0 +1,9 @@
+dist/
+node_modules/
+docs/research/
+docs/superpowers/
+public/
+routes/
+drafts/
+archive/
+catalog.json

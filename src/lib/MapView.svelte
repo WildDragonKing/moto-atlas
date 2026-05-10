@@ -13,7 +13,7 @@
     ? `https://api.maptiler.com/maps/outdoor-v2/style.json?key=${MAPTILER_KEY}`
     : 'https://tiles.openfreemap.org/styles/liberty'
 
-  let container
+  let container = $state() // wird via bind:this gesetzt — oxlint sieht es nicht
   let map
   const markers = {}
 
