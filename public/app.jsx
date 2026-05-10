@@ -2,27 +2,14 @@
 
 const { useState: useS, useEffect: useE, useRef: useR, useMemo: useM, useCallback: useC } = React;
 
-const MAP_STYLE = {
-  version: 8,
-  sources: {
-    carto: {
-      type: 'raster',
-      tiles: [
-        'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
-        'https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
-        'https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
-      ],
-      tileSize: 256,
-      attribution: '© OpenStreetMap · © CARTO',
-      maxzoom: 19
-    }
-  },
-  layers: [
-    { id: 'bg', type: 'background', paint: { 'background-color': '#f5efe0' } },
-    { id: 'carto', type: 'raster', source: 'carto',
-      paint: { 'raster-opacity': 0.85, 'raster-saturation': -0.25, 'raster-contrast': 0.05 } }
-  ]
-};
+const MAPTILER_KEY = window.MAPTILER_KEY || '';
+const MAP_STYLE = MAPTILER_KEY
+  ? `https://api.maptiler.com/maps/outdoor-v2/style.json?key=${MAPTILER_KEY}`
+  : {
+      version: 8,
+      sources: { carto: { type: 'raster', tiles: ['https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png'], tileSize: 256, attribution: '© OpenStreetMap · © CARTO', maxzoom: 19 } },
+      layers: [{ id: 'bg', type: 'background', paint: { 'background-color': '#f5efe0' } }, { id: 'carto', type: 'raster', source: 'carto', paint: { 'raster-opacity': 0.85, 'raster-saturation': -0.25 } }]
+    };
 
 function makeMarkerEl(color) {
   const el = document.createElement('div');

@@ -32,7 +32,7 @@ body { background: var(--cream); color: var(--ink); font-family: 'Lato', -apple-
 .maplibregl-ctrl-attrib a { color: var(--ink-soft) !important; }
 
 /* ROUTE MARKERS */
-.route-marker { --mc: #c4501e; position: relative; width: 28px; height: 28px; cursor: pointer; transform: translate(-50%, -50%); }
+.route-marker { --mc: #c4501e; position: relative; width: 28px; height: 28px; cursor: pointer; will-change: transform; }
 .route-marker .rm-pulse { position: absolute; inset: 4px; border-radius: 50%; background: var(--mc); opacity: 0; animation: rmPulse 2.4s ease-out infinite; }
 @keyframes rmPulse { 0% { transform: scale(0.4); opacity: 0.55; } 80%, 100% { transform: scale(2.2); opacity: 0; } }
 .route-marker .rm-ring { position: absolute; inset: 6px; border-radius: 50%; background: var(--paper); border: 1.8px solid var(--mc); box-shadow: 0 2px 8px rgba(28,18,8,0.18); transition: inset 0.18s, border-width 0.18s; }
